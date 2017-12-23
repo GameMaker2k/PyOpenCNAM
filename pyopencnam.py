@@ -43,7 +43,7 @@ master_phone_number = "+16786318356";
 master_account_sid = None;
 master_auth_token = None;
 master_service_level = "standard";
-master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
+master_opencnam_url = "http://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
