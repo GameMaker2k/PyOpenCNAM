@@ -24,6 +24,11 @@ if __name__ == '__main__':
         get_input = raw_input;
 
 try:
+    from ConfigParser import SafeConfigParser;
+except ImportError:
+    from configparser import SafeConfigParser;
+
+try:
     from urllib2 import urlopen, Request;
 except ImportError:
     from urllib.request import urlopen, Request;
@@ -50,15 +55,27 @@ master_auth_token = None;
 master_service_level = "standard";
 master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
 
+if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
+    cfgparser = SafeConfigParser();
+    cfgparser.read("pyopencnam.ini");
+    master_phone_number = cfgparser.get("OpenCNAM", "phone_number");
+    master_account_sid = cfgparser.get("OpenCNAM", "account_sid");
+    if(len(master_account_sid)<=0):
+        master_account_sid = None;
+    master_auth_token = cfgparser.get("OpenCNAM", "auth_token");
+    if(len(master_auth_token)<=0):
+        master_auth_token = None;
+    master_service_level = cfgparser.get("OpenCNAM", "service_level");
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
-    parser.add_argument("-v", "--version", action="version", version=__program_name__+" "+__version__);
-    parser.add_argument("-p", "--phonenumber", default=master_phone_number, help="enter phone number to lookup");
-    parser.add_argument("-a", "--accountsid", default=master_account_sid, help="enter account sid for lookup");
-    parser.add_argument("-t", "--authtoken", default=master_auth_token, help="enter auth token for lookup");
-    parser.add_argument("-s", "--servicelevel", default=master_service_level, help="enter service level for lookup");
-    parser.add_argument("-i", "--input", action="store_false", help="get input from command prompt");
-    getargs = parser.parse_args();
+    argparser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
+    argparser.add_argument("-v", "--version", action="version", version=__program_name__+" "+__version__);
+    argparser.add_argument("-p", "--phonenumber", default=master_phone_number, help="enter phone number to lookup");
+    argparser.add_argument("-a", "--accountsid", default=master_account_sid, help="enter account sid for lookup");
+    argparser.add_argument("-t", "--authtoken", default=master_auth_token, help="enter auth token for lookup");
+    argparser.add_argument("-s", "--servicelevel", default=master_service_level, help="enter service level for lookup");
+    argparser.add_argument("-i", "--input", action="store_false", help="get input from command prompt");
+    getargs = argparser.parse_args();
     master_phone_number = getargs.phonenumber;
     master_account_sid = getargs.accountsid;
     master_auth_token = getargs.authtoken;
