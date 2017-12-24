@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 '''
     This program is free software; you can redistribute it and/or modify
@@ -13,10 +14,14 @@
     $FileInfo: pyopencnam.py - Last Update: 12/23/2017 Ver. 1.0.0 RC 1 - Author: cooldude2k $
 '''
 
+from __future__ import print_function;
 import os, sys, json;
 
 if __name__ == '__main__':
     import argparse;
+    get_input = input;
+    if(sys.version_info[:2] <= (2, 7)):
+        get_input = raw_input;
 
 try:
     from urllib2 import urlopen, Request;
@@ -43,7 +48,7 @@ master_phone_number = "+16786318356";
 master_account_sid = None;
 master_auth_token = None;
 master_service_level = "standard";
-master_opencnam_url = "http://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
+master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
@@ -52,6 +57,7 @@ if __name__ == '__main__':
     parser.add_argument("-a", "--accountsid", default=master_account_sid, help="enter account sid for lookup");
     parser.add_argument("-t", "--authtoken", default=master_auth_token, help="enter auth token for lookup");
     parser.add_argument("-s", "--servicelevel", default=master_service_level, help="enter service level for lookup");
+    parser.add_argument("-i", "--input", action="store_false", help="get input from command prompt");
     getargs = parser.parse_args();
     master_phone_number = getargs.phonenumber;
     master_account_sid = getargs.accountsid;
@@ -67,4 +73,23 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
     return json.load(opencnam_api_data);
 
 if __name__ == '__main__':
-    print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_service_level)));
+    if(getargs.input==True):
+        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_service_level)));
+    if(getargs.input==False):
+        user_account_sid = get_input("enter account sid for lookup: ");
+        if(len(user_account_sid)<=0):
+            user_account_sid = master_account_sid;
+        user_auth_token = get_input("enter auth token for lookup: ");
+        if(len(user_auth_token)<=0):
+            user_auth_token = master_auth_token;
+        user_service_level = get_input("enter service level for lookup: ");
+        if(len(user_service_level)<=0):
+            user_service_level = master_service_level;
+        user_phone_number = get_input("enter phone number to lookup: ");
+        while(len(user_phone_number)>0):
+            print("\n");
+            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, user_service_level)));
+            print("\n");
+            user_phone_number = get_input("enter phone number to lookup: ");
+            if(len(user_phone_number)<=0):
+                break;
