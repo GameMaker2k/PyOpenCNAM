@@ -91,19 +91,19 @@ root.iconbitmap('pyopencnam-16x.ico');
 
 phonenumber_label = Label(root, text="Phone Number", height=1);
 phonenumber_label.pack(side=TOP, anchor="w");
-phonenumber = Entry(root, width=65);
+phonenumber = Entry(root, textvariable=StringVar(root, value=master_phone_number), width=65);
 phonenumber.pack(side=TOP, anchor="w");
 phonenumber.insert(END, master_phone_number);
 
 accountsid_label = Label(root, text="Account SID", height=1);
 accountsid_label.pack(side=TOP, anchor="w");
-accountsid = Entry(root, width=65);
+accountsid = Entry(root, textvariable=StringVar(root, value=master_account_sid), width=65);
 accountsid.pack(side=TOP, anchor="w");
 accountsid.insert(END, master_account_sid);
 
 authtoken_label = Label(root, text="Auth Token", height=1);
 authtoken_label.pack(side=TOP, anchor="w");
-authtoken = Entry(root, width=65);
+authtoken = Entry(root, textvariable=StringVar(root, value=master_auth_token), width=65);
 authtoken.pack(side=TOP, anchor="w");
 authtoken.insert(END, master_auth_token);
 
