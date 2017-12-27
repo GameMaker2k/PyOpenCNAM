@@ -77,8 +77,8 @@ if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
     master_auth_token = cfgparser.get("OpenCNAM", "auth_token");
     if(len(master_auth_token)<=0):
         master_auth_token = None;
-    master_service_level = cfgparser.get("OpenCNAM", "service_level");
     master_opencnam_url = cfgparser.get("OpenCNAM", "opencnam_url");
+    master_service_level = cfgparser.get("OpenCNAM", "service_level");
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
