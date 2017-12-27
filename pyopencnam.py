@@ -98,7 +98,13 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
     if(phone_number==None or account_sid==None or auth_token==None or service_level==None or (service_level!="standard" and service_level!="plus")):
         return False;
     opencnam_api_url = Request(master_opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level));
-    opencnam_api_url.add_header("Authorization", "Basic %s" % base64.b64encode('%s:%s' % (master_account_sid, master_auth_token)));
+    preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
+    if(sys.version[0]=="2"):
+        base64_user_string = base64.b64encode(preb64_user_string);
+        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string);
+    if(sys.version[0]>="3"):
+        base64_user_string = base64.b64encode(preb64_user_string.encode());
+        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string.decode());
     opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
     opencnam_api_data = urlopen(opencnam_api_url);
     return json.load(opencnam_api_data);
