@@ -15,7 +15,7 @@
 '''
 
 from __future__ import division, absolute_import, print_function;
-import os, sys, json;
+import os, sys, json, base64, platform;
 
 if __name__ == '__main__':
     import argparse;
@@ -33,6 +33,11 @@ try:
 except ImportError:
     from urllib.request import urlopen, Request;
 
+try:
+    from urllib import urlencode;
+except ImportError:
+    from urllib.parse import urlencode;
+
 __program_name__ = "PyOpenCNAM";
 __project__ = __program_name__;
 __project_url__ = "https://github.com/GameMaker2k/PyOpenCNAM";
@@ -49,11 +54,18 @@ if(__version_info__[3]!=None):
 if(__version_info__[3]==None):
     __version__ = str(__version_info__[0])+"."+str(__version_info__[1])+"."+str(__version_info__[2]);
 
+geturls_ua_pyopencnam_python = "Mozilla/5.0 (compatible; {proname}/{prover}; +{prourl})".format(proname=__project__, prover=__version__, prourl=__project_url__);
+if(platform.python_implementation()!=""):
+    geturls_ua_pyopencnam_python_alt = "Mozilla/5.0 ({osver}; {archtype}; +{prourl}) {pyimp}/{pyver} (KHTML, like Gecko) {proname}/{prover}".format(osver=platform.system()+" "+platform.release(), archtype=platform.machine(), prourl=__project_url__, pyimp=platform.python_implementation(), pyver=platform.python_version(), proname=__project__, prover=__version__);
+if(platform.python_implementation()==""):
+    geturls_ua_pyopencnam_python_alt = "Mozilla/5.0 ({osver}; {archtype}; +{prourl}) {pyimp}/{pyver} (KHTML, like Gecko) {proname}/{prover}".format(osver=platform.system()+" "+platform.release(), archtype=platform.machine(), prourl=__project_url__, pyimp="Python", pyver=platform.python_version(), proname=__project__, prover=__version__);
+
 master_phone_number = "+16786318356";
 master_account_sid = None;
 master_auth_token = None;
 master_service_level = "standard";
-master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
+master_opencnam_url_old = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
+master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?format=json&&service_level={service_level_str}";
 
 if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
     cfgparser = SafeConfigParser();
@@ -86,6 +98,8 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
     if(phone_number==None or account_sid==None or auth_token==None or service_level==None or (service_level!="standard" and service_level!="plus")):
         return False;
     opencnam_api_url = Request(master_opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level));
+    opencnam_api_url.add_header("Authorization", "Basic %s" % base64.b64encode('%s:%s' % (master_account_sid, master_auth_token)));
+    opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
     opencnam_api_data = urlopen(opencnam_api_url);
     return json.load(opencnam_api_data);
 
