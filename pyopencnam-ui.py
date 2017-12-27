@@ -91,26 +91,26 @@ root.iconbitmap('pyopencnam-16x.ico');
 
 phonenumber_label = Label(root, text="Phone Number", height=1);
 phonenumber_label.pack(side=TOP, anchor="w");
-phonenumber = Entry(root, width=40);
+phonenumber = Entry(root, width=65);
 phonenumber.pack(side=TOP, anchor="w");
 phonenumber.insert(END, master_phone_number);
 
 accountsid_label = Label(root, text="Account SID", height=1);
 accountsid_label.pack(side=TOP, anchor="w");
-accountsid = Entry(root, width=40);
+accountsid = Entry(root, width=65);
 accountsid.pack(side=TOP, anchor="w");
 accountsid.insert(END, master_account_sid);
 
 authtoken_label = Label(root, text="Auth Token", height=1);
 authtoken_label.pack(side=TOP, anchor="w");
-authtoken = Entry(root, width=40);
+authtoken = Entry(root, width=65);
 authtoken.pack(side=TOP, anchor="w");
 authtoken.insert(END, master_auth_token);
 
 service_level = reversed(["standard", "plus"]);
 servicelevel_label = Label(root, text="Service Level", height=1);
 servicelevel_label.pack(side=TOP, anchor="w");
-servicelevel = Listbox(root, width=40, height=2);
+servicelevel = Listbox(root, width=65, height=2);
 for item in service_level:
     servicelevel.insert(0, item);
 servicelevel.pack(side=TOP, anchor="w");
@@ -126,7 +126,7 @@ button.pack(pady=20, padx = 20)
 
 queryresult_label = Label(root, text="Query Result", height=1);
 queryresult_label.pack(side=TOP, anchor="w");
-queryresult = Text(root, height=8, width=50);
+queryresult = Text(root, height=8, width=49);
 queryresult.pack(side=TOP, anchor="w");
 queryresult.delete(0.0, END);
 
