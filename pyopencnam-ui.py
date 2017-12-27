@@ -85,7 +85,7 @@ def QueryCNAM():
     return True;
 
 root = Tk();
-root.geometry("400x400");
+root.geometry("400x440");
 root.resizable(width=False, height=False);
 root.title(str(__program_name__)+" Query Tool "+str(__version__));
 root.iconbitmap('pyopencnam-16x.ico');
@@ -105,6 +105,11 @@ authtoken_label.pack(side=TOP, anchor="w");
 authtoken = Entry(root, textvariable=StringVar(root, value=master_auth_token), width=65);
 authtoken.pack(side=TOP, anchor="w");
 
+opencnamurl_label = Label(root, text="OpenCNAM URL", height=1);
+opencnamurl_label.pack(side=TOP, anchor="w");
+opencnamurl = Entry(root, textvariable=StringVar(root, value=master_opencnam_url), width=65);
+opencnamurl.pack(side=TOP, anchor="w");
+
 service_level = reversed(["standard", "plus"]);
 servicelevel_label = Label(root, text="Service Level", height=1);
 servicelevel_label.pack(side=TOP, anchor="w");
@@ -120,7 +125,7 @@ else:
     servicelevel.select_set(0);
 
 button = Button(root, text="Run CNAM Query", command=QueryCNAM)
-button.pack(pady=20, padx = 20)
+button.pack(pady=20, padx=20)
 
 queryresult_label = Label(root, text="Query Result", height=1);
 queryresult_label.pack(side=TOP, anchor="w");
