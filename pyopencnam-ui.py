@@ -11,17 +11,11 @@
     Copyright 2016 Cool Dude 2k - http://idb.berlios.de/
     Copyright 2016 Game Maker 2k - http://intdb.sourceforge.net/
     Copyright 2016 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
-    $FileInfo: pyopencnam.py - Last Update: 12/27/2017 Ver. 1.0.0 RC 2 - Author: cooldude2k $
+    $FileInfo: pyopencnam-ui.py - Last Update: 12/27/2017 Ver. 1.0.0 RC 2 - Author: cooldude2k $
 '''
 
 from __future__ import division, absolute_import, print_function;
-import os, sys, json, base64, platform;
-
-if __name__ == '__main__':
-    import argparse;
-    get_input = input;
-    if(sys.version_info[:2] <= (2, 7)):
-        get_input = raw_input;
+import os, sys, json, pyopencnam, platform;
 
 try:
     from ConfigParser import SafeConfigParser;
@@ -29,14 +23,18 @@ except ImportError:
     from configparser import SafeConfigParser;
 
 try:
-    from urllib2 import urlopen, Request;
+    import Tkinter, tkMessageBox, tkFileDialog, tkColorChooser, tkSimpleDialog;
 except ImportError:
-    from urllib.request import urlopen, Request;
+    import tkinter as Tkinter;
+    from tkinter import messagebox as tkMessageBox;
+    from tkinter import filedialog as tkFileDialog;
+    from tkinter import colorchooser as tkColorChooser;
+    from tkinter import simpledialog as tkSimpleDialog;
 
 try:
-    from urllib import urlencode;
+    from Tkinter import *;
 except ImportError:
-    from urllib.parse import urlencode;
+    from tkinter import *;
 
 __program_name__ = "PyOpenCNAM";
 __project__ = __program_name__;
@@ -64,8 +62,6 @@ master_phone_number = "+16786318356";
 master_account_sid = None;
 master_auth_token = None;
 master_service_level = "standard";
-master_opencnam_url_old = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&&service_level={service_level_str}";
-master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?format=json&&service_level={service_level_str}";
 
 if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
     cfgparser = SafeConfigParser();
@@ -77,56 +73,59 @@ if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
     master_auth_token = cfgparser.get("OpenCNAM", "auth_token");
     if(len(master_auth_token)<=0):
         master_auth_token = None;
+    master_opencnam_url = cfgparser.get("OpenCNAM", "opencnam_url");
     master_service_level = cfgparser.get("OpenCNAM", "service_level");
 
-if __name__ == '__main__':
-    argparser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
-    argparser.add_argument("-v", "--version", action="version", version=__program_name__+" "+__version__);
-    argparser.add_argument("-p", "--phonenumber", default=master_phone_number, help="enter phone number to lookup");
-    argparser.add_argument("-a", "--accountsid", default=master_account_sid, help="enter account sid for lookup");
-    argparser.add_argument("-t", "--authtoken", default=master_auth_token, help="enter auth token for lookup");
-    argparser.add_argument("-s", "--servicelevel", default=master_service_level, help="enter service level for lookup");
-    argparser.add_argument("-i", "--input", action="store_false", help="get input from command prompt");
-    getargs = argparser.parse_args();
-    master_phone_number = getargs.phonenumber;
-    master_account_sid = getargs.accountsid;
-    master_auth_token = getargs.authtoken;
-    master_service_level = getargs.servicelevel;
+def QueryCNAM():
+    queryresult.delete(0.0, END);
+    opencnam_queryresult = pyopencnam.query_cnam_info(phonenumber.get(), accountsid.get(), authtoken.get(), master_opencnam_url, servicelevel.get(ACTIVE));
+    print(opencnam_queryresult);
+    opencnam_result = "{\n  \"name\": \""+str(opencnam_queryresult['name'])+"\",\n  \"number\": \""+str(opencnam_queryresult['number'])+"\",\n  \"price\": "+str(opencnam_queryresult['price'])+",\n  \"uri\": \""+str(opencnam_queryresult['uri'])+"\"\n}\n";
+    queryresult.insert(END, opencnam_result);
+    return True;
 
-def query_cnam_info(phone_number = master_phone_number, account_sid = master_account_sid, auth_token = master_auth_token, service_level = master_service_level):
-    global master_account_sid, master_auth_token;
-    if(phone_number==None or account_sid==None or auth_token==None or service_level==None or (service_level!="standard" and service_level!="plus")):
-        return False;
-    opencnam_api_url = Request(master_opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level));
-    preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
-    if(sys.version[0]=="2"):
-        base64_user_string = base64.b64encode(preb64_user_string);
-        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string);
-    if(sys.version[0]>="3"):
-        base64_user_string = base64.b64encode(preb64_user_string.encode());
-        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string.decode());
-    opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
-    opencnam_api_data = urlopen(opencnam_api_url);
-    return json.load(opencnam_api_data);
+root = Tk();
+root.geometry("400x400");
+root.resizable(width=False, height=False);
+root.title(str(__program_name__)+" Query Tool "+str(__version__));
+root.iconbitmap('pyopencnam-16x.ico');
 
-if __name__ == '__main__':
-    if(getargs.input==True):
-        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_service_level)));
-    if(getargs.input==False):
-        user_account_sid = get_input("enter account sid for lookup: ");
-        if(len(user_account_sid)<=0):
-            user_account_sid = master_account_sid;
-        user_auth_token = get_input("enter auth token for lookup: ");
-        if(len(user_auth_token)<=0):
-            user_auth_token = master_auth_token;
-        user_service_level = get_input("enter service level for lookup: ");
-        if(len(user_service_level)<=0):
-            user_service_level = master_service_level;
-        user_phone_number = get_input("enter phone number to lookup: ");
-        while(len(user_phone_number)>0):
-            print("\n");
-            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, user_service_level)));
-            print("\n");
-            user_phone_number = get_input("enter phone number to lookup: ");
-            if(len(user_phone_number)<=0):
-                break;
+phonenumber_label = Label(root, text="Phone Number", height=1);
+phonenumber_label.pack(side=TOP, anchor="w");
+phonenumber = Entry(root, textvariable=StringVar(root, value=master_phone_number), width=65);
+phonenumber.pack(side=TOP, anchor="w");
+
+accountsid_label = Label(root, text="Account SID", height=1);
+accountsid_label.pack(side=TOP, anchor="w");
+accountsid = Entry(root, textvariable=StringVar(root, value=master_account_sid), width=65);
+accountsid.pack(side=TOP, anchor="w");
+
+authtoken_label = Label(root, text="Auth Token", height=1);
+authtoken_label.pack(side=TOP, anchor="w");
+authtoken = Entry(root, textvariable=StringVar(root, value=master_auth_token), width=65);
+authtoken.pack(side=TOP, anchor="w");
+
+service_level = reversed(["standard", "plus"]);
+servicelevel_label = Label(root, text="Service Level", height=1);
+servicelevel_label.pack(side=TOP, anchor="w");
+servicelevel = Listbox(root, width=65, height=2);
+for item in service_level:
+    servicelevel.insert(0, item);
+servicelevel.pack(side=TOP, anchor="w");
+if(master_service_level=="standard"):
+    servicelevel.select_set(0);
+elif(master_service_level=="plus"):
+    servicelevel.select_set(1);
+else:
+    servicelevel.select_set(0);
+
+button = Button(root, text="Run CNAM Query", command=QueryCNAM)
+button.pack(pady=20, padx = 20)
+
+queryresult_label = Label(root, text="Query Result", height=1);
+queryresult_label.pack(side=TOP, anchor="w");
+queryresult = Text(root, height=8, width=49);
+queryresult.pack(side=TOP, anchor="w");
+queryresult.delete(0.0, END);
+
+root.mainloop();
