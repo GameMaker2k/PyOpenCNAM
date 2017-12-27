@@ -14,7 +14,7 @@
     $FileInfo: pyopencnam.py - Last Update: 12/23/2017 Ver. 1.0.0 RC 1 - Author: cooldude2k $
 '''
 
-from __future__ import division, absolute_import, print_function;
+from __future__ import print_function;
 import os, sys, json;
 
 if __name__ == '__main__':
