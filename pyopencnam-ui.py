@@ -110,7 +110,7 @@ opencnamurl_label.pack(side=TOP, anchor="w");
 opencnamurl = Entry(root, textvariable=StringVar(root, value=master_opencnam_url), width=65);
 opencnamurl.pack(side=TOP, anchor="w");
 
-service_level = reversed(["standard", "plus"]);
+service_level = reversed(["standard", "value", "plus"]);
 servicelevel_label = Label(root, text="Service Level", height=1);
 servicelevel_label.pack(side=TOP, anchor="w");
 servicelevel = Listbox(root, width=65, height=2);
