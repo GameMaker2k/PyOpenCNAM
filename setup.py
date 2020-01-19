@@ -9,11 +9,11 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     Revised BSD License for more details.
 
-    Copyright 2016 Cool Dude 2k - http://idb.berlios.de/
-    Copyright 2016 Game Maker 2k - http://intdb.sourceforge.net/
-    Copyright 2016 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
+    Copyright 2020 Cool Dude 2k - http://idb.berlios.de/
+    Copyright 2020 Game Maker 2k - http://intdb.sourceforge.net/
+    Copyright 2020 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
 
-    $FileInfo: setup.py - Last Update: 12/27/2017 Ver. 1.0.0 RC 2 - Author: cooldude2k $
+    $FileInfo: setup.py - Last Update: 1/19/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
 '''
 
 import re, os, sys, time, datetime, platform, pkg_resources;

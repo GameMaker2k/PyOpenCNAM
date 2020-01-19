@@ -8,10 +8,10 @@
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     Revised BSD License for more details.
-    Copyright 2016 Cool Dude 2k - http://idb.berlios.de/
-    Copyright 2016 Game Maker 2k - http://intdb.sourceforge.net/
-    Copyright 2016 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
-    $FileInfo: pyopencnam-ui.py - Last Update: 12/27/2017 Ver. 1.0.0 RC 2 - Author: cooldude2k $
+    Copyright 2020 Cool Dude 2k - http://idb.berlios.de/
+    Copyright 2020 Game Maker 2k - http://intdb.sourceforge.net/
+    Copyright 2020 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
+    $FileInfo: pyopencnam-ui.py - Last Update: 1/19/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
 '''
 
 from __future__ import division, absolute_import, print_function;
@@ -39,8 +39,8 @@ except ImportError:
 __program_name__ = "PyOpenCNAM";
 __project__ = __program_name__;
 __project_url__ = "https://github.com/GameMaker2k/PyOpenCNAM";
-__version_info__ = (1, 0, 0, "RC 2", 2);
-__version_date_info__ = (2017, 12, 27, "RC 2", 2);
+__version_info__ = (1, 2, 0, "RC 1", 1);
+__version_date_info__ = (2020, 1, 19, "RC 2", 2);
 __version_date__ = str(__version_date_info__[0])+"."+str(__version_date_info__[1]).zfill(2)+"."+str(__version_date_info__[2]).zfill(2);
 
 if(__version_info__[4]!=None):
