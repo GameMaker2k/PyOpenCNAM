@@ -18,7 +18,7 @@
 '''
 
 from __future__ import division, absolute_import, print_function;
-import os, sys, json, base64, platform;
+import os, sys, json, base64, platform, imp;
 
 if __name__ == '__main__':
     import argparse;
@@ -33,6 +33,20 @@ except ImportError:
         from configparser import SafeConfigParser;
     else:
         from configparser import ConfigParser as SafeConfigParser;
+
+try:
+    imp.find_module('requests');
+    haverequests = True;
+    import requests;
+except ImportError:
+    haverequests = False;
+    havemechanize = False;
+try:
+    imp.find_module('mechanize');
+    havemechanize = True;
+    import mechanize;
+except ImportError:
+    havemechanize = False;
 
 try:
     from urllib2 import urlopen, Request;
@@ -90,6 +104,10 @@ if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
         master_auth_token = None;
     master_opencnam_url = cfgparser.get("OpenCNAM", "opencnam_url");
     master_service_level = cfgparser.get("OpenCNAM", "service_level");
+    master_casing = cfgparser.get("OpenCNAM", "casing");
+    master_mobile = cfgparser.get("OpenCNAM", "mobile");
+    master_no_value = cfgparser.get("OpenCNAM", "no_value");
+    master_geo = cfgparser.get("OpenCNAM", "geo");
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
@@ -115,24 +133,39 @@ if __name__ == '__main__':
     master_no_value = getargs.novalue;
     master_geo = getargs.geo;
 
-def query_cnam_info(phone_number = master_phone_number, account_sid = master_account_sid, auth_token = master_auth_token, opencnam_url = master_opencnam_url, service_level = master_service_level, casing = master_casing, mobile = master_mobile, no_value = master_no_value, geo = master_geo):
+def query_cnam_info(phone_number = master_phone_number, account_sid = master_account_sid, auth_token = master_auth_token, opencnam_url = master_opencnam_url, service_level = master_service_level, casing = master_casing, mobile = master_mobile, no_value = master_no_value, geo = master_geo, httplibuse = "urllib"):
     if(phone_number==None or account_sid==None or auth_token==None or service_level==None or (service_level!="standard" and service_level!="plus")):
-        return False;
-    opencnam_api_url = Request(opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level, casing_str = casing, mobile_str = mobile, no_value_str = no_value, geo_str = geo));
-    preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
-    if(sys.version[0]=="2"):
-        base64_user_string = base64.b64encode(preb64_user_string);
-        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string);
-    if(sys.version[0]>="3"):
-        base64_user_string = base64.b64encode(preb64_user_string.encode());
-        opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string.decode());
-    opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
-    opencnam_api_data = urlopen(opencnam_api_url);
-    return json.load(opencnam_api_data);
+         return False;
+    if(httplibuse=="urllib"):
+        opencnam_api_url = Request(opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level, casing_str = casing, mobile_str = mobile, no_value_str = no_value, geo_str = geo));
+        preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
+        if(sys.version[0]=="2"):
+            base64_user_string = base64.b64encode(preb64_user_string);
+            opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string);
+        if(sys.version[0]>="3"):
+            base64_user_string = base64.b64encode(preb64_user_string.encode());
+            opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string.decode());
+        opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
+        opencnam_api_data = urlopen(opencnam_api_url);
+        outdata = json.load(opencnam_api_data);
+    elif(httplibuse=="requests"):
+        preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
+        r_header = {};
+        if(sys.version[0]=="2"):
+            base64_user_string = base64.b64encode(preb64_user_string);
+            r_header.update( {'Authorization' : base64_user_string} );
+        if(sys.version[0]>="3"):
+            base64_user_string = base64.b64encode(preb64_user_string.encode());
+            r_header.update( {'Authorization' : base64_user_string.decode()} );
+        r_header.update( {'User-Agent' : geturls_ua_pyopencnam_python_alt} );
+        print(r_header);
+        opencnam_api_data = requests.get(opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level, casing_str = casing, mobile_str = mobile, no_value_str = no_value, geo_str = geo), r_header);
+        outdata = opencnam_api_data.json();
+    return outdata;
 
 if __name__ == '__main__':
     if(getargs.input==True):
-        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo)));
+        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
     if(getargs.input==False):
         user_account_sid = get_input("enter account sid for lookup: ");
         if(len(user_account_sid)<=0):
@@ -146,7 +179,7 @@ if __name__ == '__main__':
         user_phone_number = get_input("enter phone number to lookup: ");
         while(len(user_phone_number)>0):
             print("\n");
-            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo)));
+            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
             print("\n");
             user_phone_number = get_input("enter phone number to lookup: ");
             if(len(user_phone_number)<=0):
