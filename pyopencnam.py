@@ -20,10 +20,13 @@
 from __future__ import division, absolute_import, print_function;
 import os, sys, json, base64, platform;
 
+'''
 if(sys.version_info[:2] <= (3, 4)):
     import imp;
 else:
     import importlib;
+'''
+import imp;
 
 if __name__ == '__main__':
     import argparse;
