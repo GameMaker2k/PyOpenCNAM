@@ -228,7 +228,7 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
 
 if __name__ == '__main__':
     if(getargs.input==True):
-        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo, "requests")));
+        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
     if(getargs.input==False):
         user_account_sid = get_input("enter account sid for lookup: ");
         if(len(user_account_sid)<=0):
@@ -242,7 +242,7 @@ if __name__ == '__main__':
         user_phone_number = get_input("enter phone number to lookup: ");
         while(len(user_phone_number)>0):
             print("\n");
-            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo, "requests")));
+            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
             print("\n");
             user_phone_number = get_input("enter phone number to lookup: ");
             if(len(user_phone_number)<=0):
