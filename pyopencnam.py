@@ -188,7 +188,7 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
             base64_user_string = base64.b64encode(preb64_user_string.encode());
             opencnam_api_url.add_header("Authorization", "Basic "+base64_user_string.decode());
         opencnam_api_url.add_header("User-Agent", geturls_ua_pyopencnam_python_alt);
-		opencnam_api_url.add_header("Referer", "https://www.opencnam.com/dashboard/delivery/query-tool");
+        opencnam_api_url.add_header("Referer", "https://www.opencnam.com/dashboard/delivery/query-tool");
         opencnam_api_data = urlopen(opencnam_api_url);
         outdata = json.load(opencnam_api_data);
     elif(httplibuse=="requests"):
@@ -205,7 +205,7 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
         opencnam_api_data = requests.get(opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level, casing_str = casing, mobile_str = mobile, no_value_str = no_value, geo_str = geo), headers=r_header);
         outdata = opencnam_api_data.json();
     elif(httplibuse=="mechanize"):
-		geturls_opener = mechanize.Browser();
+        geturls_opener = mechanize.Browser();
         preb64_user_string = str(master_account_sid)+":"+str(master_auth_token);
         r_header = {};
         if(sys.version[0]=="2"):
@@ -216,9 +216,9 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
             r_header.update( {'Authorization' : base64_user_string.decode()} );
         r_header.update( {'User-Agent' : geturls_ua_pyopencnam_python_alt} );
         r_header.update( {'Referer' : "https://www.opencnam.com/dashboard/delivery/query-tool"} );
-		r_header = make_http_headers_from_dict_to_list(r_header);
-		geturls_opener.addheaders = r_header;
-		geturls_opener.set_handle_robots(False);
+        r_header = make_http_headers_from_dict_to_list(r_header);
+        geturls_opener.addheaders = r_header;
+        geturls_opener.set_handle_robots(False);
         print(r_header);
         opencnam_api_data = geturls_opener.open(opencnam_url.format(phone_number_str = phone_number, account_sid_str = account_sid, auth_token_str = auth_token, service_level_str = service_level, casing_str = casing, mobile_str = mobile, no_value_str = no_value, geo_str = geo));
         outdata = opencnam_api_data.json();
