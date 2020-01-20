@@ -13,7 +13,7 @@
     Copyright 2020 Game Maker 2k - http://intdb.sourceforge.net/
     Copyright 2020 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
 
-    $FileInfo: setup.py - Last Update: 1/19/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
+    $FileInfo: setup.py - Last Update: 1/20/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
 '''
 
 import re, os, sys, time, datetime, platform, pkg_resources;

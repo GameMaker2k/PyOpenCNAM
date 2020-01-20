@@ -14,7 +14,7 @@
     Copyright 2020 Game Maker 2k - http://intdb.sourceforge.net/
     Copyright 2020 Kazuki Przyborowski - https://github.com/KazukiPrzyborowski
 
-    $FileInfo: pyopencnam.py - Last Update: 1/19/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
+    $FileInfo: pyopencnam.py - Last Update: 1/20/2020 Ver. 1.2.0 RC 1 - Author: cooldude2k $
 '''
 
 from __future__ import division, absolute_import, print_function;
@@ -70,7 +70,7 @@ __program_name__ = "PyOpenCNAM";
 __project__ = __program_name__;
 __project_url__ = "https://github.com/GameMaker2k/PyOpenCNAM";
 __version_info__ = (1, 2, 0, "RC 1", 1);
-__version_date_info__ = (2020, 1, 19, "RC 2", 2);
+__version_date_info__ = (2020, 1, 20, "RC 1", 1);
 __version_date__ = str(__version_date_info__[0])+"."+str(__version_date_info__[1]).zfill(2)+"."+str(__version_date_info__[2]).zfill(2);
 
 if(__version_info__[4]!=None):
@@ -96,6 +96,7 @@ master_casing = "caps";
 master_mobile = "location";
 master_no_value = "unknown";
 master_geo = "wire";
+master_http_lib = "urllib";
 
 master_opencnam_url_old = "https://api.opencnam.com/v3/phone/{phone_number_str}?account_sid={account_sid_str}&auth_token={auth_token_str}&format=json&service_level={service_level_str}&casing={casing_str}&mobile={mobile_str}&no_value={no_value_str}&geo={geo_str}";
 master_opencnam_url = "https://api.opencnam.com/v3/phone/{phone_number_str}?format=json&service_level={service_level_str}&casing={casing_str}&mobile={mobile_str}&no_value={no_value_str}&geo={geo_str}";
@@ -116,6 +117,7 @@ if(os.path.exists("pyopencnam.ini") and os.path.isfile("pyopencnam.ini")):
     master_mobile = cfgparser.get("OpenCNAM", "mobile");
     master_no_value = cfgparser.get("OpenCNAM", "no_value");
     master_geo = cfgparser.get("OpenCNAM", "geo");
+    master_http_lib = cfgparser.get("OpenCNAM", "http_lib");
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser(description="Get cnam info from phone numbers from opencnam", conflict_handler="resolve", add_help=True);
@@ -129,6 +131,7 @@ if __name__ == '__main__':
     argparser.add_argument("-m", "--mobile", default=master_opencnam_url, help="output for mobile numbers");
     argparser.add_argument("-n", "--novalue", default=master_opencnam_url, help="output for unknown numbers");
     argparser.add_argument("-g", "--geo", default=master_opencnam_url, help="output for geo locations");
+    argparser.add_argument("-h", "--httplib", default=master_http_lib, help="select httplib to use for request");
     argparser.add_argument("-i", "--input", action="store_false", help="get input from command prompt");
     getargs = argparser.parse_args();
     master_phone_number = getargs.phonenumber;
@@ -140,6 +143,7 @@ if __name__ == '__main__':
     master_mobile = getargs.mobile;
     master_no_value = getargs.novalue;
     master_geo = getargs.geo;
+    master_http_lib = getargs.httplib;
 
 def make_http_headers_from_dict_to_list(headers={'Referer': "https://www.opencnam.com/dashboard/delivery/query-tool", 'User-Agent': geturls_ua_pyopencnam_python_alt}):
  if isinstance(headers, dict):
@@ -173,7 +177,7 @@ def get_httplib_support(checkvalue=None):
             returnval = False;
     return returnval;
 
-def query_cnam_info(phone_number = master_phone_number, account_sid = master_account_sid, auth_token = master_auth_token, opencnam_url = master_opencnam_url, service_level = master_service_level, casing = master_casing, mobile = master_mobile, no_value = master_no_value, geo = master_geo, httplibuse = "urllib"):
+def query_cnam_info(phone_number = master_phone_number, account_sid = master_account_sid, auth_token = master_auth_token, opencnam_url = master_opencnam_url, service_level = master_service_level, casing = master_casing, mobile = master_mobile, no_value = master_no_value, geo = master_geo, httplibuse = master_http_lib):
     if(phone_number==None or account_sid==None or auth_token==None or service_level==None or (service_level!="standard" and service_level!="plus")):
          return False;
     if(not get_httplib_support(httplibuse)):
@@ -228,7 +232,7 @@ def query_cnam_info(phone_number = master_phone_number, account_sid = master_acc
 
 if __name__ == '__main__':
     if(getargs.input==True):
-        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
+        print(json.dumps(query_cnam_info(master_phone_number, master_account_sid, master_auth_token, master_opencnam_url, master_service_level, master_casing, master_mobile, master_no_value, master_geo, master_http_lib)));
     if(getargs.input==False):
         user_account_sid = get_input("enter account sid for lookup: ");
         if(len(user_account_sid)<=0):
@@ -242,7 +246,7 @@ if __name__ == '__main__':
         user_phone_number = get_input("enter phone number to lookup: ");
         while(len(user_phone_number)>0):
             print("\n");
-            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo, "urllib")));
+            print(json.dumps(query_cnam_info(user_phone_number, user_account_sid, user_auth_token, master_opencnam_url, user_service_level, master_casing, master_mobile, master_no_value, master_geo, master_http_lib)));
             print("\n");
             user_phone_number = get_input("enter phone number to lookup: ");
             if(len(user_phone_number)<=0):
